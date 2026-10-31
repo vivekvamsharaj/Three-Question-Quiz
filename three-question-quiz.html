@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three-Question Quiz</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      background: #eef2ff;
+      color: #1f2937;
+    }
+    .quiz {
+      width: 100%;
+      max-width: 480px;
+      padding: 28px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 28px rgba(31, 41, 55, .12);
+    }
+    h1 { margin: 0 0 8px; color: #3730a3; font-size: 26px; }
+    .subtitle { margin: 0 0 24px; color: #6b7280; }
+    #progress { margin-bottom: 10px; color: #4b5563; font-size: 14px; }
+    #question { font-size: 19px; line-height: 1.4; }
+    #options { display: grid; gap: 10px; margin-top: 20px; }
+    button {
+      width: 100%;
+      padding: 13px 16px;
+      border: 0;
+      border-radius: 8px;
+      background: #4f46e5;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background .15s, transform .15s;
+    }
+    button:hover { background: #3730a3; }
+    button:focus-visible { outline: 3px solid #a5b4fc; outline-offset: 2px; }
+    button:disabled { cursor: default; opacity: .7; }
+    #result { min-height: 28px; margin: 20px 0 0; font-size: 20px; font-weight: 700; }
+    #restart { margin-top: 14px; background: #059669; }
+    #restart:hover { background: #047857; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="quiz">
+    <h1>Three-Question Quiz</h1>
+    <p class="subtitle">Test your basic web development knowledge.</p>
+    <p id="progress" aria-live="polite"></p>
+    <h2 id="question"></h2>
+    <div id="options"></div>
+    <p id="result" aria-live="polite"></p>
+    <button id="restart" type="button" hidden>Restart Quiz</button>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        question: "1. Which language is used for web page structure?",
+        options: ["Python", "HTML", "Java", "C++"],
+        answer: "HTML"
+      },
+      {
+        question: "2. Which language is used for styling web pages?",
+        options: ["CSS", "SQL", "C", "Python"],
+        answer: "CSS"
+      },
+      {
+        question: "3. Which language makes web pages interactive?",
+        options: ["Java", "HTML", "JavaScript", "C++"],
+        answer: "JavaScript"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionElement = document.getElementById("question");
+    const optionsElement = document.getElementById("options");
+    const progressElement = document.getElementById("progress");
+    const resultElement = document.getElementById("result");
+    const restartButton = document.getElementById("restart");
+
+    function showQuestion() {
+      resultElement.textContent = "";
+
+      if (currentQuestion >= questions.length) {
+        questionElement.textContent = "Quiz completed!";
+        optionsElement.replaceChildren();
+        progressElement.textContent = "You answered all 3 questions.";
+        resultElement.textContent = `Your final score: ${score} / ${questions.length}`;
+        restartButton.hidden = false;
+        return;
+      }
+
+      const item = questions[currentQuestion];
+      progressElement.textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+      questionElement.textContent = item.question;
+      optionsElement.replaceChildren();
+
+      item.options.forEach(option => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = option;
+        button.addEventListener("click", () => checkAnswer(option));
+        optionsElement.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selectedAnswer) {
+      if (selectedAnswer === questions[currentQuestion].answer) {
+        score++;
+      }
+      currentQuestion++;
+      showQuestion();
+    }
+
+    function restartQuiz() {
+      currentQuestion = 0;
+      score = 0;
+      restartButton.hidden = true;
+      showQuestion();
+    }
+
+    restartButton.addEventListener("click", restartQuiz);
+    showQuestion();
+  </script>
+</body>
+</html>
